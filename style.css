@@ -1,0 +1,405 @@
+/* ---------- RESET ---------- */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* ---------- BASE ---------- */
+body {
+    font-family: 'Segoe UI', sans-serif;
+    background: linear-gradient(135deg, #f4e4ba, #fdf6d8);
+    color: #222;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+
+/* ---------- MODE TOGGLE ---------- */
+.mode {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: white;
+    padding: 8px 12px;
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    z-index: 10;
+}
+
+.mode i {
+    font-size: 16px;
+}
+
+/* ---------- CONTAINER ---------- */
+.container {
+    width: 100%;
+    max-width: 420px;
+    background: white;
+    padding: 25px;
+    border-radius: 16px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+    text-align: center;
+    position: relative;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+/* ---------- TITLE ---------- */
+.container h2 {
+    margin-bottom: 20px;
+    font-size: 22px;
+    font-weight: 600;
+}
+
+/* ---------- AMOUNT ---------- */
+.amount p {
+    text-align: left;
+    font-size: 14px;
+    margin-bottom: 5px;
+}
+
+.amount input {
+    width: 100%;
+    padding: 12px;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    font-size: 16px;
+    outline: none;
+    transition: 0.2s;
+}
+
+.amount input:focus {
+    border-color: #888;
+}
+
+/* ---------- DROPDOWN ---------- */
+.dropdown {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 20px 0;
+    gap: 10px;
+}
+
+.from,
+.to {
+    width: 100%;
+}
+
+/* ---------- SELECT CONTAINER ---------- */
+.select-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    position: relative;
+
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 6px 10px;
+    background: white;
+}
+
+.select-container img {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+}
+
+/* ---------- INPUT ---------- */
+.search-input {
+    width: 100%;
+    border: none;
+    outline: none;
+    font-size: 14px;
+    background: transparent;
+    font-weight: 400;
+}
+
+/* ---------- SUGGESTION BOX ---------- */
+.suggestion-box {
+    position: absolute;
+    top: 110%;
+    left: 0;
+    width: 100%;
+    max-height: 180px;
+    overflow-y: auto;
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    box-shadow: 0 6px 15px rgba(0,0,0,0.1);
+    display: none;
+    z-index: 1000;
+}
+
+.suggestion-item {
+    padding: 10px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.suggestion-item:hover {
+    background: #f5f5f5;
+}
+
+/* ---------- SWAP ---------- */
+#swap {
+    margin-top: 8px;
+}
+
+.swap {
+    font-size: 20px;
+    cursor: pointer;
+    padding: 8px;
+    border-radius: 50%;
+    transition: 0.2s;
+}
+
+.swap:hover {
+    background: #f0f0f0;
+}
+
+/* ---------- MESSAGE ---------- */
+.msg {
+    margin: 15px 0;
+    font-size: 16px;
+    font-weight: 500;
+}
+
+/* ---------- BUTTON ---------- */
+button {
+    width: 100%;
+    padding: 12px;
+    border: none;
+    border-radius: 10px;
+    background: #222;
+    color: white;
+    font-size: 15px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+button:hover {
+    background: #444;
+}
+
+/* ---------- BACKGROUND ---------- */
+body::before {
+    content: "💱";
+    position: fixed;
+    top: 60%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 120px;
+    opacity: 0.05;
+    z-index: 0;
+}
+
+/* ---------- SCROLLBAR ---------- */
+.suggestion-box::-webkit-scrollbar {
+    width: 6px;
+}
+
+.suggestion-box::-webkit-scrollbar-thumb {
+    background: #ccc;
+    border-radius: 5px;
+}
+
+/* ---------- DARK MODE ---------- */
+body.dark {
+    background: #121212;
+    color: white;
+}
+
+body.dark .container {
+    background: #1e1e1e;
+}
+
+body.dark input,
+body.dark .search-input {
+    background: #2a2a2a;
+    color: white;
+    border: 1px solid #444;
+}
+
+body.dark .suggestion-box {
+    background: #2a2a2a;
+}
+
+body.dark button {
+    background: white;
+    color: black;
+}
+
+body.dark .mode {
+    background: #2a2a2a;
+    color: white;
+}
+
+body.dark .mode i {
+    color: white;
+}
+
+/* ---------- MOBILE ---------- */
+@media (max-width: 600px) {
+    .container {
+        padding: 18px;
+    }
+
+    .dropdown {
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .swap {
+        transform: rotate(90deg);
+    }
+
+    .msg {
+        font-size: 14px;
+    }
+
+    body::before {
+        font-size: 60px;
+    }
+}
+.suggestion-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.suggestion-item img {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+}.footer {
+    margin-top: 40px;
+    padding: 25px 20px;
+    text-align: center;
+    background: rgba(255, 255, 255, 0.6);
+    border-radius: 12px;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+.footer h2 {
+    margin-bottom: 10px;
+    font-size: 18px;
+}
+
+.dev-name {
+    margin-bottom: 8px;
+    font-size: 14px;
+}
+
+.email {
+    font-size: 13px;
+    margin-bottom: 15px;
+    color: #555;
+}
+
+.email i {
+    margin-right: 6px;
+}
+
+/* SOCIAL ICONS */
+.social-icons {
+    display: flex;
+    justify-content: center;
+    gap: 18px;
+}
+
+.social-icons a {
+    font-size: 20px;
+    color: #333;
+    transition: 0.3s;
+}
+
+.social-icons a:hover {
+    transform: scale(1.2);
+    color: #000;
+}
+
+/* DARK MODE SUPPORT */
+body.dark .footer {
+    background: rgba(30, 30, 30, 0.8);
+}
+
+body.dark .social-icons a {
+    color: white;
+}
+.footer {
+    margin-top: 10px;
+    padding-top: 15px;
+    border-top: 1px solid #ddd;
+    text-align: center;
+}
+
+.footer h2 {
+    font-size: 16px;
+    margin-bottom: 6px;
+}
+
+.dev-name {
+    font-size: 13px;
+    margin-bottom: 5px;
+}
+
+.email {
+    font-size: 12px;
+    color: #666;
+    margin-bottom: 10px;
+}
+
+/* SOCIAL ICONS */
+.social-icons {
+    display: flex;
+    justify-content: center;
+    gap: 14px;
+}
+
+.social-icons a {
+    font-size: 18px;
+    color: #333;
+    transition: 0.3s;
+}
+
+.social-icons a:hover {
+    transform: scale(1.2);
+}
+
+/* DARK MODE */
+body.dark .footer {
+    border-top: 1px solid #444;
+}
+
+body.dark .social-icons a {
+    color: white;
+}
+.dev-img {
+    width: 90px;
+    height: 90px;
+    object-fit: cover;
+
+    border-radius: 50%;
+    margin: 10px 0;
+
+    border: 2px solid #ddd;
+
+    transition: 0.3s;
+    cursor: pointer;
+}
+
+.dev-img:hover {
+    transform: scale(1.1);
+}
