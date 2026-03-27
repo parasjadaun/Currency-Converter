@@ -11,6 +11,13 @@ const modeText = document.querySelector(".mode p");
 const msgText = document.querySelector(".text");
 const amountInput = document.querySelector(".amount input");
 const swapBtn = document.querySelector(".swap");
+const loader = document.querySelector(".loader");
+
+// ---------------- STATE ----------------
+let isUserChanged = false;
+
+// ---------------- CACHE ----------------
+const rateCache = {};
 
 // ---------------- DARK MODE ----------------
 function setModeUI() {
@@ -45,7 +52,10 @@ for (let select of dropdowns) {
         select.append(option);
     }
 
-    select.addEventListener("change", (e) => updateFlag(e.target));
+    select.addEventListener("change", (e) => {
+        updateFlag(e.target);
+        markUserChanged();
+    });
 }
 
 // ---------------- FLAG ----------------
@@ -57,47 +67,95 @@ function updateFlag(element) {
     }
 }
 
+// ---------------- LOADER ----------------
+function showLoader() {
+    loader.classList.remove("hidden");
+}
+function hideLoader() {
+    loader.classList.add("hidden");
+}
+
+// ---------------- VALIDATION ----------------
+function isValidAmount(val) {
+    return val && val > 0;
+}
+
+// ---------------- USER CHANGE TRACK ----------------
+function markUserChanged() {
+    isUserChanged = true;
+    msgText.innerText = "👇 Tap 'Get Exchange Rate' to update";
+}
+
 // ---------------- CONVERT ----------------
 async function convert() {
-    let amount = Number(amountInput.value);
-amountInput.addEventListener("focus", () => {
-    if (amountInput.value === "1") {
-        amountInput.value = "";
-    }
-});
 
+    let amount = Number(amountInput.value);
     let from = fromCurr.value;
     let to = toCurr.value;
+
+    if (!isValidAmount(amount)) {
+        msgText.innerText = "Enter a valid amount";
+        return;
+    }
 
     if (from === to) {
         msgText.innerText = `${amount} ${from.toUpperCase()} = ${amount} ${to.toUpperCase()}`;
         return;
     }
 
-    msgText.innerText = "Loading live rate...";
+    msgText.innerText = "";
+    showLoader();
 
     try {
-        let res = await fetch(
-            `https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@latest/v1/currencies/${from}.json`
-        );
+        let cacheKey = `${from}_${to}`;
+        let rate;
 
-        let data = await res.json();
-        let rate = data[from][to];
+        if (rateCache[cacheKey]) {
+            rate = rateCache[cacheKey];
+        } else {
+            let res = await fetch(
+                `https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@latest/v1/currencies/${from}.json`
+            );
+
+            let data = await res.json();
+            rate = data[from][to];
+
+            rateCache[cacheKey] = rate;
+        }
 
         let finalAmount = (amount * rate).toFixed(2);
 
         msgText.innerText =
             `${amount} ${from.toUpperCase()} = ${finalAmount} ${to.toUpperCase()}`;
 
+        // Reset state after successful conversion
+        isUserChanged = false;
+
     } catch {
-        msgText.innerText = "Network error!";
+        msgText.innerText = "⚠️ Network error. Try again.";
     }
+
+    hideLoader();
 }
+
+// ---------------- INPUT EVENTS ----------------
+
+// FIXED: no repeated listeners
+amountInput.addEventListener("focus", () => {
+    if (amountInput.value === "1") {
+        amountInput.value = "";
+    }
+});
+
+// prevent invalid typing
 amountInput.addEventListener("keydown", (e) => {
     if (e.key === "-" || e.key === "e") {
         e.preventDefault();
     }
 });
+
+// 👇 IMPORTANT: NO AUTO CONVERT
+amountInput.addEventListener("input", markUserChanged);
 
 // ---------------- AUTOCOMPLETE ----------------
 function createAutocomplete(select) {
@@ -119,20 +177,17 @@ function createAutocomplete(select) {
 
     syncInput();
 
-    // 🔥 SHOW LIST ON CLICK
     input.addEventListener("focus", () => {
         renderList("");
         list.style.display = "block";
     });
 
-    // 🔥 INPUT HANDLER (FIXED)
     input.addEventListener("input", () => {
         const value = input.value.toUpperCase();
 
         renderList(value.toLowerCase());
         list.style.display = "block";
 
-        // 🔥 LIVE FLAG UPDATE
         if (countryList[value]) {
             const img = wrapper.querySelector("img");
             if (img) {
@@ -195,16 +250,13 @@ btn.addEventListener("click", (e) => {
 
 fromCurr.addEventListener("change", () => {
     fromAuto.syncInput();
-    convert();
 });
 
 toCurr.addEventListener("change", () => {
     toAuto.syncInput();
-    convert();
 });
 
-amountInput.addEventListener("input", convert);
-
+// SWAP
 swapBtn.addEventListener("click", () => {
     let temp = fromCurr.value;
     fromCurr.value = toCurr.value;
@@ -216,7 +268,7 @@ swapBtn.addEventListener("click", () => {
     updateFlag(fromCurr);
     updateFlag(toCurr);
 
-    convert();
+    markUserChanged();
 });
 
 // ---------------- INITIAL LOAD ----------------
@@ -231,6 +283,25 @@ window.addEventListener("DOMContentLoaded", () => {
     updateFlag(fromCurr);
     updateFlag(toCurr);
 
-    msgText.innerText = "Loading live rate...";
+    // ONLY initial auto convert
     convert();
+});
+// ---------- RIPPLE EFFECT ----------
+document.querySelectorAll("button, .swap, .select-container").forEach(el => {
+    el.classList.add("ripple");
+
+    el.addEventListener("click", function (e) {
+        const circle = document.createElement("span");
+
+        const rect = this.getBoundingClientRect();
+        const size = Math.max(rect.width, rect.height);
+
+        circle.style.width = circle.style.height = size + "px";
+        circle.style.left = e.clientX - rect.left - size / 2 + "px";
+        circle.style.top = e.clientY - rect.top - size / 2 + "px";
+
+        this.appendChild(circle);
+
+        setTimeout(() => circle.remove(), 600);
+    });
 });
