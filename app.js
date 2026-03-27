@@ -286,3 +286,10 @@ window.addEventListener("DOMContentLoaded", () => {
     // ONLY initial auto convert
     convert();
 });
+// ===== MAKE FULL BOX CLICKABLE =====
+document.querySelectorAll(".select-container").forEach(container => {
+    container.addEventListener("click", () => {
+        const input = container.querySelector(".search-input");
+        if (input) input.focus();
+    });
+});
