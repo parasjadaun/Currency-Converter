@@ -704,4 +704,121 @@ button:active,
         transform: scale(4);
         opacity: 0;
     }
+}/* ===== AUTOCOMPLETE FIX (Z-INDEX + OVERFLOW) ===== */
+
+/* allow dropdown to escape container */
+.container {
+    overflow: visible;
+}
+
+/* ensure dropdown parent stays above */
+.select-container {
+    position: relative;
+    z-index: 10;
+}
+
+/* make suggestion box always visible on top */
+.suggestion-box {
+    position: absolute;
+    top: 110%;
+    left: 0;
+    width: 100%;
+
+    z-index: 9999;
+
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+
+    box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+}
+
+/* dark mode support */
+body.dark .suggestion-box {
+    background: #2a2a2a;
+    border: 1px solid #444;
+}
+/* ===== FIX INPUT AREA WIDTH (NOT TEXT SIZE) ===== */
+
+.select-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+/* flag stays fixed */
+.select-container img {
+    flex-shrink: 0;
+}
+
+/* input grows to fill remaining space */
+.search-input {
+    flex: 1;
+    width: 100%;
+    min-width: 0;
+
+    font-size: 14px; /* keep your original size */
+}
+
+/* IMPORTANT: remove internal spacing issue */
+.select-container select {
+    flex: 1;
+    width: 100%;
+}/* make it feel clickable */
+.select-container {
+    cursor: text;
+}
+/* ===== DARK MODE INPUT FIX ===== */
+
+body.dark .select-container {
+    background: #2a2a2a;
+    border: 1px solid #555;
+}
+
+body.dark .search-input {
+    background: transparent;
+    color: #fff;
+}
+
+body.dark .search-input::placeholder {
+    color: #aaa;
+}
+
+/* focus state (important) */
+body.dark .select-container:focus-within {
+    border-color: #888;
+    box-shadow: 0 0 0 2px rgba(255,255,255,0.08);
+}
+
+
+/* ===== SUGGESTION BOX FIX ===== */
+
+body.dark .suggestion-box {
+    background: #2a2a2a;
+    border: 1px solid #444;
+}
+
+/* NORMAL TEXT */
+body.dark .suggestion-item {
+    color: #fff;
+}
+
+/* 🔥 HOVER FIX (MOST IMPORTANT) */
+.suggestion-item:hover {
+    background: #eaeaea;
+    color: #000; /* force visible text */
+}
+
+/* DARK MODE HOVER */
+body.dark .suggestion-item:hover {
+    background: #3a3a3a;
+    color: #fff; /* FIX: keep text visible */
+}
+
+/* ensure flag stays visible */
+.suggestion-item img {
+    flex-shrink: 0;
+}
+.suggestion-item {
+    transition: background 0.2s, color 0.2s;
 }
